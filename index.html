@@ -198,6 +198,23 @@
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
 
+  /* ---------- NO BUTTON PHRASES ---------- */
+    const noPhrases = [
+      "Leave me alone 😭",
+      "Don't press me",
+      "Press yes ❤️",
+      "Stop chasing me",
+      "I’m scared 😳",
+      "Why though?",
+      "Please no",
+      "Not happening",
+      "Try the other button 😉",
+      "You can’t catch me",
+      "Just press yes already",
+      "Wrong choice buddy"
+    ];
+
+    let phraseIndex = 0;
     /* ---------- CONFETTI ---------- */
     const confettiCanvas = document.getElementById("confettiCanvas");
 
@@ -274,6 +291,10 @@
       noBtn.style.left = newLeft + "px";
       noBtn.style.top = newTop + "px";
       noBtn.style.transform = "none";
+
+      /* NEW — change text each time it runs */
+      phraseIndex = (phraseIndex + 1) % noPhrases.length;
+      noBtn.textContent = noPhrases[phraseIndex];
 
       growYes();
     }
