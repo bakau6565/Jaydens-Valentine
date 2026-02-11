@@ -253,6 +253,9 @@
 
 <body>
   <canvas id="confettiCanvas"></canvas>
+  <audio id="loveSong" preload="auto">
+    <source src="love-song.mp3" type="audio/mpeg">
+  </audio>
   <div id="heartsLayer" aria-hidden="true"></div>
   
   <section id="envelopeScreen" class="envelope-screen" aria-label="Open envelope">
@@ -456,6 +459,10 @@
       zone.style.display = "none";
       hint.style.display = "none";     // HIDE THE HINT
       result.style.display = "block";
+      /* PLAY SONG */
+      loveSong.currentTime = 0;
+      loveSong.play();
+      
       resizeConfettiCanvas();
       fullScreenConfetti();
     });
