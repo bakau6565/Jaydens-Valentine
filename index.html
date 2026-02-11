@@ -215,6 +215,11 @@
     ];
 
     let phraseIndex = 0;
+    
+    /* Cooldown control */
+    let lastPhraseChange = 0;
+    const phraseCooldownMs = 600; // change every 0.6 sec
+    
     /* ---------- CONFETTI ---------- */
     const confettiCanvas = document.getElementById("confettiCanvas");
 
@@ -292,9 +297,13 @@
       noBtn.style.top = newTop + "px";
       noBtn.style.transform = "none";
 
-      /* NEW — change text each time it runs */
-      phraseIndex = (phraseIndex + 1) % noPhrases.length;
-      noBtn.textContent = noPhrases[phraseIndex];
+      /* TEXT CHANGE WITH DELAY */
+      const now = Date.now();
+      if (now - lastPhraseChange >= phraseCooldownMs) {
+        phraseIndex = (phraseIndex + 1) % noPhrases.length;
+        noBtn.textContent = noPhrases[phraseIndex];
+        lastPhraseChange = now;
+      }
 
       growYes();
     }
