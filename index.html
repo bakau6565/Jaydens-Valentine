@@ -213,11 +213,47 @@
   }
 }
     
+    /* ---------- FALLING HEARTS BACKGROUND ---------- */
+#heartsLayer{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0; /* behind the card */
+  overflow: hidden;
+}
+
+/* Make sure your card stays above the hearts */
+.card{
+  position: relative;
+  z-index: 2;
+}
+
+/* Each heart */
+.falling-heart{
+  position: absolute;
+  top: -10vh;
+  font-size: 18px;
+  opacity: 0.85;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.12));
+  animation-name: heartFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes heartFall{
+  0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--drift, 0vw), 115vh, 0) rotate(360deg); }
+
+}
+
+    
   </style>
 </head>
 
 <body>
   <canvas id="confettiCanvas"></canvas>
+  <div id="heartsLayer" aria-hidden="true"></div>
   
   <section id="envelopeScreen" class="envelope-screen" aria-label="Open envelope">
     <div class="envelope" id="envelope" role="button" tabindex="0">
@@ -447,6 +483,51 @@ envelope.addEventListener("click", openEnvelope);
 envelope.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") openEnvelope();
 });
+    
+    /* ---------- FALLING HEARTS GENERATOR ---------- */
+const heartsLayer = document.getElementById("heartsLayer");
+
+function rand(min, max){
+  return Math.random() * (max - min) + min;
+}
+
+function spawnHeart(){
+  const heart = document.createElement("div");
+  heart.className = "falling-heart";
+  heart.textContent = "♥";
+
+  // Random horizontal start
+  heart.style.left = rand(0, 100) + "vw";
+
+  // Random size
+  heart.style.fontSize = rand(14, 30) + "px";
+
+  // Random color (red/pink)
+  const colors = ["#ff2d55", "#ff4d7d", "#e60023", "#ff7aa8"];
+  heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+  // Random fall duration + slight horizontal drift
+  const duration = rand(6, 14);
+  const drift = rand(-25, 25);
+  heart.style.animationDuration = duration + "s";
+  heart.style.animationDelay = rand(0, 6) + "s";
+
+  // Apply drift by using translateX in a CSS variable style
+  heart.style.setProperty("--drift", drift + "vw");
+
+  heartsLayer.appendChild(heart);
+
+  // Cleanup after a while (keeps DOM from growing forever)
+  setTimeout(() => heart.remove(), (duration + 8) * 1000);
+}
+
+// Start with a bunch already falling
+for(let i = 0; i < 28; i++){
+  spawnHeart();
+}
+
+// Keep spawning periodically
+setInterval(spawnHeart, 450);
     
   </script>
 </body>
