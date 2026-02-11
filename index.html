@@ -126,13 +126,97 @@
       from { transform: scale(.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+    
+    /* ---------- ENVELOPE INTRO ---------- */
+.envelope-screen{
+  display:grid;
+  place-items:center;
+  width:100%;
+}
+
+.envelope{
+  position:relative;
+  width:min(360px, 90vw);
+  height:240px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
+}
+
+.env-back{
+  position:absolute;
+  inset:0;
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 18px 60px rgba(0,0,0,.15);
+}
+
+.env-front{
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  background:linear-gradient(#ffffffcc, #ffffffaa);
+  clip-path: polygon(0 40%, 50% 75%, 100% 40%, 100% 100%, 0 100%);
+}
+
+.env-flap{
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  background:linear-gradient(#ffe3ee, #ffd0e4);
+  clip-path: polygon(0 40%, 50% 5%, 100% 40%);
+  transform-origin: top center;
+  transition: transform .6s ease;
+}
+
+.env-letter{
+  position:absolute;
+  left:7%;
+  right:7%;
+  bottom:10%;
+  height:72%;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+  display:grid;
+  place-items:center;
+  transform: translateY(0);
+  transition: transform .7s ease;
+}
+
+.letter-text{
+  font-weight:800;
+  font-size:18px;
+  opacity:.9;
+}
+
+/* OPEN STATE */
+.envelope.open .env-flap{ transform: rotateX(180deg); }
+.envelope.open .env-letter{ transform: translateY(-40%); }
+
+/* fade out envelope screen when done */
+.envelope-screen.fadeout{ animation: fadeout .45s ease forwards; }
+@keyframes fadeout{ to { opacity:0; transform: scale(.98); } }
+    
   </style>
 </head>
 
 <body>
   <canvas id="confettiCanvas"></canvas>
+  
+  <section id="envelopeScreen" class="envelope-screen" aria-label="Open envelope">
+    <div class="envelope" id="envelope" role="button" tabindex="0">
+      <div class="env-back"></div>
+      <div class="env-letter">
+        <div class="letter-text">Tap to open 💌</div>
+      </div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+    </div>
+  </section>
 
-  <main class="card">
+  <main class="card" id="app" style="display:none;">
     <!-- ANIMAL WITH HEART -->
     <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -327,6 +411,31 @@
       resizeConfettiCanvas();
       fullScreenConfetti();
     });
+    
+    /* ---------- ENVELOPE INTRO ---------- */
+const envelopeScreen = document.getElementById("envelopeScreen");
+const envelope = document.getElementById("envelope");
+const app = document.getElementById("app");
+
+function openEnvelope() {
+  envelope.classList.add("open");
+
+  setTimeout(() => {
+    envelopeScreen.classList.add("fadeout");
+  }, 650);
+
+  setTimeout(() => {
+    envelopeScreen.style.display = "none";
+    app.style.display = "block";
+    resizeConfettiCanvas(); // important after layout changes
+  }, 1100);
+}
+
+envelope.addEventListener("click", openEnvelope);
+envelope.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") openEnvelope();
+});
+    
   </script>
 </body>
 </html>
